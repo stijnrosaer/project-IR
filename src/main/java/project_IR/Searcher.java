@@ -6,13 +6,9 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.queryparser.ext.Extensions;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.javatuples.Pair;
 
@@ -23,6 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Searcher {
+    /**
+     *
+     * @param queryString the query in string form
+     * @param k the max amount that are allowed to be returned
+     * @param index_directory the directory with the indexfiles
+     * @return a list of pairs containing the top k  documents and their scores
+     */
     public static List<Pair<Document, Float>> search(String queryString, Integer k, Path index_directory) throws ParseException, IOException {
 
         MultiFieldQueryParser parser = new MultiFieldQueryParser(new String[]{"title","tags" ,"question", "answers" }, new SimpleAnalyzer());
