@@ -8,6 +8,8 @@ import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.search.similarities.BM25Similarity;
+import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.FSDirectory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -37,11 +39,11 @@ public class Indexer {
      * the public function that will initialize the indexWriter and index every file that will be called from the outside
      * @param source_path path where source documents are located
      * @param index_path path where the index files should be written to
-     * @throws IOException
      */
-    public static void index(Path source_path, Path index_path) throws IOException {
+    public static void index(Path source_path, Path index_path, Similarity similarity) throws IOException {
         IndexWriterConfig config = new IndexWriterConfig(analyzer); // Basic Configuration for the indexWriter
         config.setOpenMode(CREATE); //overwrite the index if already exists
+        config.setSimilarity(similarity);
         IndexWriter writer = new IndexWriter(FSDirectory.open(index_path), config); // Object that will generate the indexes of all files
         final Integer[] index = {0};
         if (Files.isDirectory(source_path)) {
@@ -72,9 +74,6 @@ public class Indexer {
      * use the indexWriter to index the given file
      * @param file_path the path to the file to be indexed
      * @param writer the indexWriter
-     * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws SAXException
      */
     static void indexFile(Path file_path, IndexWriter writer) throws IOException, ParserConfigurationException, SAXException {
 

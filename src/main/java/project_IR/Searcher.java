@@ -1,6 +1,6 @@
 package project_IR;
 
-import org.apache.lucene.analysis.core.SimpleAnalyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -9,6 +9,8 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.similarities.BM25Similarity;
+import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.FSDirectory;
 import org.javatuples.Pair;
 
@@ -26,14 +28,15 @@ public class Searcher {
      * @param index_directory the directory with the indexfiles
      * @return a list of pairs containing the top k  documents and their scores
      */
-    public static List<Pair<Document, Float>> search(String queryString, Integer k, Path index_directory, String[] fields) throws ParseException, IOException {
+    public static List<Pair<Document, Float>> search(String queryString, Integer k, Path index_directory, String[] fields, Similarity similarity) throws ParseException, IOException {
 
-        MultiFieldQueryParser parser = new MultiFieldQueryParser(fields , new SimpleAnalyzer());
+        MultiFieldQueryParser parser = new MultiFieldQueryParser(fields , new StandardAnalyzer());
         Query query = parser.parse(queryString);
 
         FSDirectory dir = FSDirectory.open(index_directory);
         IndexReader reader = DirectoryReader.open(dir);
         IndexSearcher searcher = new IndexSearcher(reader);
+        searcher.setSimilarity(similarity);
 
         ScoreDoc[] scoreDocs = searcher.search(query, k).scoreDocs;
 
