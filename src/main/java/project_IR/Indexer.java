@@ -1,9 +1,14 @@
+package project_IR;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.index.*;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.FieldType;
+import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.document.*;
-
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -14,33 +19,39 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main {
-    public static  Path index_path = Path.of("./index"); // Destination of indexed files
-    public static Path source_path = Path.of("./documents"); // Source files
+public class Indexer {
 
     public static Analyzer analyzer = new StandardAnalyzer(); // Basic analyzer needed for the indexWriter
 
     /**
      * the public function that will initialize the indexWriter and index every file that will be called from the outside
-     * @param args basic arguments given to a main function (currently not used)
+     * @param source_path path where source documents are located
+     * @param index_path path where the index files should be written to
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void index(Path source_path, Path index_path) throws IOException {
         IndexWriterConfig config = new IndexWriterConfig(analyzer); // Basic Configuration for the indexWriter
         IndexWriter writer = new IndexWriter(FSDirectory.open(index_path), config); // Object that will generate the indexes of all files
-
+        final Integer[] index = {0};
         if (Files.isDirectory(source_path)) {
             Files.walkFileTree(source_path, new SimpleFileVisitor<Path>() { //loop over all files in source_path
                 @Override //override a function used while walking over files
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     try {
                         indexFile(file, writer); //index the file using the indexWriter
-                    } catch (IOException | ParserConfigurationException |SAXException ignore) {
+                        if (index[0] % 10000 == 0) {
+                            System.out.println("Indexed " + index[0].toString() + " files");
+                        }
+                        index[0]++;
+                    } catch (IOException | ParserConfigurationException | SAXException ignore) {
 
                     }
                     return FileVisitResult.CONTINUE;
