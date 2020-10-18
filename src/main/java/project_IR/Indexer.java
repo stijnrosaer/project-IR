@@ -58,6 +58,8 @@ public class Indexer {
                 }
             });
         }
+        writer.commit();
+        writer.close();
 
         System.out.println("Finished indexing "+ index[0].toString() +" files");
 
