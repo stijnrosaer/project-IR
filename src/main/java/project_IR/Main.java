@@ -20,7 +20,6 @@ public class Main {
     public static Similarity sim = new ClassicSimilarity();
 
 
-
     /**
      * the public function that will initialize the indexWriter and index every file that will be called from the outside
      *
@@ -37,28 +36,28 @@ public class Main {
                         i++;
 
 
-                    }
-                    else if(args[i].equals("--similarity") || args[i].equals("-s")){
-                        if (args[i+1].equals("okapi")){
+                    } else if (args[i].equals("--similarity") || args[i].equals("-s")) {
+                        switch (args[i + 1]) {
+                            case "okapi":
 
-                            sim = new BM25Similarity();
+                                sim = new BM25Similarity();
 
 
-                        }else if(args[i+1].equals("classic")){
+                                break;
+                            case "classic":
 
-                            i++;
-                            continue;
+                                i++;
+                                continue;
 
-                        }else if(args[i+1].equals("boolean")){
+                            case "boolean":
 
-                            sim = new BooleanSimilarity();
+                                sim = new BooleanSimilarity();
+                                break;
                         }
                         i++;
 
 
-                    }
-
-                    else {
+                    } else {
 
                         System.out.println("tag not recognized:  " + args[i]);
                     }
@@ -68,7 +67,7 @@ public class Main {
             }
             if (args[0].equals("search")) {
                 String querystring = "";
-                String[] fields = new String[]{"tags" ,"question", "answers"};
+                String[] fields = new String[]{"tags", "question", "answers"};
                 Integer k = 20;
 
                 for (int i = 1; i < args.length; i++) {
@@ -79,46 +78,45 @@ public class Main {
 
                         i++;
 
-                    }
-                    else if (args[i].equals("--field") || args[i].equals("-f")){
+                    } else if (args[i].equals("--field") || args[i].equals("-f")) {
                         List<String> fieldsList = new ArrayList<String>();
 
-                        while (args.length > i+1 && args[i+1].charAt(0) != '-'){
-                            fieldsList.add(args[i+1]);
+                        while (args.length > i + 1 && args[i + 1].charAt(0) != '-') {
+                            fieldsList.add(args[i + 1]);
                             i++;
 
                         }
                         fields = new String[fieldsList.size()];
                         fields = fieldsList.toArray(fields);
 
-                    }
-                    else if (args[i].equals("--amount") || args[i].equals("-a")) {
+                    } else if (args[i].equals("--amount") || args[i].equals("-a")) {
 
                         k = Integer.parseInt(args[i + 1]);
 
                         i++;
 
-                    }
-                    else if(args[i].equals("--similarity") || args[i].equals("-s")){
-                        if (args[i+1].equals("okapi")){
+                    } else if (args[i].equals("--similarity") || args[i].equals("-s")) {
+                        switch (args[i + 1]) {
+                            case "okapi":
 
-                            sim = new BM25Similarity();
+                                sim = new BM25Similarity();
 
 
-                        }else if(args[i+1].equals("classic")){
+                                break;
+                            case "classic":
 
-                            i++;
-                            continue;
+                                i++;
+                                continue;
 
-                        }else if(args[i+1].equals("boolean")){
+                            case "boolean":
 
-                            sim = new BooleanSimilarity();
+                                sim = new BooleanSimilarity();
+                                break;
                         }
                         i++;
 
 
-                    }
-                    else {
+                    } else {
 
                         System.out.println("tag not recognized:  " + args[i]);
                     }
@@ -131,10 +129,10 @@ public class Main {
                 }
                 List<Pair<Document, Float>> documents = Searcher.search(querystring, k, index_path, fields, sim);
 
-                for (Pair<Document, Float> doc: documents){
+                for (Pair<Document, Float> doc : documents) {
 
-                    System.out.println("title: " + doc.getValue0().get("title") + "\nfile:"+ doc.getValue0().get("id")
-                    + "        score:"+doc.getValue1()+ "\n");
+                    System.out.println("title: " + doc.getValue0().get("title") + "\nfile:" + doc.getValue0().get("id")
+                            + "        score:" + doc.getValue1() + "\n");
 
                 }
 
