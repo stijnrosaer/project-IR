@@ -7,12 +7,14 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.queryparser.ext.Extensions;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.javatuples.Pair;
 
 
 import java.io.IOException;
@@ -21,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Searcher {
-    public static List<Document> search(String queryString, Integer k, Path index_directory) throws ParseException, IOException {
+    public static List<Pair<Document, Float>> search(String queryString, Integer k, Path index_directory) throws ParseException, IOException {
 
         MultiFieldQueryParser parser = new MultiFieldQueryParser(new String[]{"title","tags" ,"question", "answers" }, new SimpleAnalyzer());
         Query query = parser.parse(queryString);
@@ -33,7 +35,7 @@ public class Searcher {
         ScoreDoc[] scoreDocs = searcher.search(query, k).scoreDocs;
 
 
-        List<Document> documents = scoreDocs_to_docsList(scoreDocs, searcher);
+        List<Pair<Document, Float>> documents = scoreDocs_to_docsList(scoreDocs, searcher);
 
         System.out.println("topdocs:  " + documents.toString());
 
@@ -42,13 +44,13 @@ public class Searcher {
 
     }
 
-    private static List<Document> scoreDocs_to_docsList(ScoreDoc[] scoreDocs, IndexSearcher searcher) throws IOException {
+    private static List<Pair<Document, Float>> scoreDocs_to_docsList(ScoreDoc[] scoreDocs, IndexSearcher searcher) throws IOException {
 
-        List<Document> documents = new ArrayList<Document>();
+        List<Pair<Document, Float>> documents = new ArrayList<Pair<Document, Float>>();
 
         for(ScoreDoc scDoc: scoreDocs){
 
-            documents.add(searcher.doc(scDoc.doc));
+            documents.add(new Pair<Document, Float>(searcher.doc(scDoc.doc), scDoc.score));
 
         }
         return documents;

@@ -2,6 +2,7 @@ package project_IR;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.javatuples.Pair;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -19,7 +20,7 @@ public class Main {
      */
     public static void main(String[] args) throws IOException, ParseException {
 //        Indexer.index(source_path, index_path);
-        List<Document> documents = Searcher.search("for loop", 20, index_path);
+        List<Pair<Document, Float>> documents = Searcher.search("for loop", 20, index_path);
 
     }
 }
