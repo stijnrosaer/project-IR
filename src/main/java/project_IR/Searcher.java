@@ -26,9 +26,9 @@ public class Searcher {
      * @param index_directory the directory with the indexfiles
      * @return a list of pairs containing the top k  documents and their scores
      */
-    public static List<Pair<Document, Float>> search(String queryString, Integer k, Path index_directory) throws ParseException, IOException {
+    public static List<Pair<Document, Float>> search(String queryString, Integer k, Path index_directory, String[] fields) throws ParseException, IOException {
 
-        MultiFieldQueryParser parser = new MultiFieldQueryParser(new String[]{"title","tags" ,"question", "answers" }, new SimpleAnalyzer());
+        MultiFieldQueryParser parser = new MultiFieldQueryParser(fields , new SimpleAnalyzer());
         Query query = parser.parse(queryString);
 
         FSDirectory dir = FSDirectory.open(index_directory);

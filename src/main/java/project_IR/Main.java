@@ -6,6 +6,7 @@ import org.javatuples.Pair;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -40,6 +41,7 @@ public class Main {
             }
             if (args[0].equals("search")) {
                 String querystring = "";
+                String[] fields = new String[]{"tags" ,"question", "answers"};
 
                 for (int i = 1; i < args.length; i++) {
                     // argument parameter must be in between quotation marks if it's more than 1 word
@@ -49,7 +51,20 @@ public class Main {
 
                         i++;
 
-                    } else {
+                    }
+                    else if (args[i].equals("--field") || args[i].equals("-f")){
+                        List<String> fieldsList = new ArrayList<String>();
+
+                        while (args.length > i+1 && args[i+1].charAt(0) != '-'){
+                            fieldsList.add(args[i+1]);
+                            i++;
+
+                        }
+                        fields = new String[fieldsList.size()];
+                        fields = fieldsList.toArray(fields);
+
+                    }
+                    else {
 
                         System.out.println("tag not recognized:  " + args[i]);
                     }
@@ -60,7 +75,7 @@ public class Main {
                     System.out.println("--query is not an optional argument");
                     return;
                 }
-                List<Pair<Document, Float>> documents = Searcher.search(querystring, 20, index_path);
+                List<Pair<Document, Float>> documents = Searcher.search(querystring, 20, index_path, fields);
 
                 System.out.println("topdocs:  " + documents.toString());
             }

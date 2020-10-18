@@ -27,6 +27,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.lucene.index.IndexWriterConfig.OpenMode.CREATE;
+
 public class Indexer {
 
     public static Analyzer analyzer = new StandardAnalyzer(); // Basic analyzer needed for the indexWriter
@@ -39,6 +41,7 @@ public class Indexer {
      */
     public static void index(Path source_path, Path index_path) throws IOException {
         IndexWriterConfig config = new IndexWriterConfig(analyzer); // Basic Configuration for the indexWriter
+        config.setOpenMode(CREATE); //overwrite the index if already exists
         IndexWriter writer = new IndexWriter(FSDirectory.open(index_path), config); // Object that will generate the indexes of all files
         final Integer[] index = {0};
         if (Files.isDirectory(source_path)) {
