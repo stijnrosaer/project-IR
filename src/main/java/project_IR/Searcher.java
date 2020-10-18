@@ -40,8 +40,6 @@ public class Searcher {
 
         List<Pair<Document, Float>> documents = scoreDocs_to_docsList(scoreDocs, searcher);
 
-        System.out.println("topdocs:  " + documents.toString());
-
         return documents;
 
 
