@@ -4,11 +4,10 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.FSDirectory;
@@ -30,6 +29,7 @@ public class Searcher {
      */
     public static List<Pair<Document, Float>> search(String queryString, Integer k, Path index_directory, String[] fields, Similarity similarity) throws ParseException, IOException {
 
+//        Query query = new WildcardQuery(new Term("title", queryString));
         MultiFieldQueryParser parser = new MultiFieldQueryParser(fields , new StandardAnalyzer());
         Query query = parser.parse(queryString);
 
