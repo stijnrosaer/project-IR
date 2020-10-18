@@ -77,7 +77,14 @@ public class Main {
                 }
                 List<Pair<Document, Float>> documents = Searcher.search(querystring, 20, index_path, fields);
 
-                System.out.println("topdocs:  " + documents.toString());
+                for (Pair<Document, Float> doc: documents){
+
+                    System.out.println("title: " + doc.getValue0().get("title") + "\nfile:"+ doc.getValue0().get("id")
+                    + "        score:"+doc.getValue1()+ "\n");
+
+                }
+
+
             }
         }
     }
