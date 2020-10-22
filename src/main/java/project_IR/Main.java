@@ -49,8 +49,8 @@ public class Main {
                                 break;
                             case "classic":
 
-                                i++;
-                                continue;
+                                sim = new ClassicSimilarity();
+                                break;
 
                             case "boolean":
 
@@ -117,8 +117,8 @@ public class Main {
                                 break;
                             case "classic":
 
-                                i++;
-                                continue;
+                                sim = new ClassicSimilarity();
+                                break;
 
                             case "boolean":
 
