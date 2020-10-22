@@ -28,9 +28,12 @@ public class Main {
      */
     public static void main(String[] args) throws IOException, ParseException {
         if (args.length > 0) {
+            // add the index command
             if (args[0].equals("index")) {
 
+                // check for all the different flags we can give to the index command
                 for (int i = 1; i < args.length; i++) {
+                    // documents is used to locate the place where the documents are put (has a base value used for development)
                     if (args[i].equals("--documents") || args[i].equals("-d")) {
 
                         source_path = Path.of(args[i + 1]);
@@ -38,6 +41,7 @@ public class Main {
 
 
                     }
+                    // similarity will ask you which similarity to use, okapi, boolean, or classic(standard)
                     else if(args[i].equals("--similarity") || args[i].equals("-s")){
                         if (args[i+1].equals("okapi")){
 
@@ -66,13 +70,16 @@ public class Main {
 
                 Indexer.index(source_path, index_path, sim);
             }
+            // the search command
             if (args[0].equals("search")) {
+                //standard values for when flags are not used
                 String querystring = "";
                 String[] fields = new String[]{"tags" ,"question", "answers"};
                 Integer k = 20;
 
                 for (int i = 1; i < args.length; i++) {
-                    // argument parameter must be in between quotation marks if it's more than 1 word
+                    //the query flag gives the query to ask, this is a required flag
+                    // argument parameter for query flag must be in between quotation marks if it's more than 1 word
                     if (args[i].equals("--query") || args[i].equals("-q")) {
 
                         querystring = args[i + 1];
@@ -80,6 +87,8 @@ public class Main {
                         i++;
 
                     }
+                    // the field flag will state which field(s) to look the query for
+                    // choice out of title, tags ,question, answers, all but title are standard
                     else if (args[i].equals("--field") || args[i].equals("-f")){
                         List<String> fieldsList = new ArrayList<String>();
 
@@ -92,6 +101,7 @@ public class Main {
                         fields = fieldsList.toArray(fields);
 
                     }
+                    // the amount flag tells how many documents will be returned
                     else if (args[i].equals("--amount") || args[i].equals("-a")) {
 
                         k = Integer.parseInt(args[i + 1]);
@@ -99,6 +109,8 @@ public class Main {
                         i++;
 
                     }
+                    // the similarity flag asks what similarity to be used
+                    // needs to be the same as when indexed
                     else if(args[i].equals("--similarity") || args[i].equals("-s")){
                         if (args[i+1].equals("okapi")){
 

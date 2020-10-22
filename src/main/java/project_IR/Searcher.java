@@ -48,6 +48,12 @@ public class Searcher {
 
     }
 
+    /**
+     *
+     * @param scoreDocs the list of scoredocs
+     * @param searcher the indexSearcher
+     * @return  a List of Pairs of Documents and teir score
+     */
     private static List<Pair<Document, Float>> scoreDocs_to_docsList(ScoreDoc[] scoreDocs, IndexSearcher searcher) throws IOException {
 
         List<Pair<Document, Float>> documents = new ArrayList<Pair<Document, Float>>();
