@@ -194,12 +194,12 @@ public class Main {
                     }
                 }
 
-                Integer[] k_values = new Integer[]{10, 20, 25};
+                Integer[] k_values = new Integer[]{3, 10, 20, 50};
 
-                ArrayList<Integer> results = new ArrayList<Integer>();
+                List<Integer> results = new ArrayList<Integer>();
+                List<Float> accuracy = new ArrayList<Float>();
                 for (Integer k : k_values) {
                     int correct = 0;
-                    int count = 0;
 
                     File fileNames = new File("titles_tmp.txt");    //creates a new file instance
                     FileReader fr = new FileReader(fileNames, StandardCharsets.UTF_8);   //reads the file
@@ -209,7 +209,6 @@ public class Main {
                         try {
 //                            String title = new String(line.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.ISO_8859_1);
                             Pair<List<Pair<Document, Float>>, Long> documents = Searcher.search(line, k, index_path, fields, sim);
-                            count += 1;
 
                             for (Pair<Document, Float> doc : documents.getValue0()) {
                                 if (doc.getValue0().get("title").equals(line)) {
@@ -223,11 +222,14 @@ public class Main {
 
                     }
                     results.add(correct);
-                    results.add(count);
+                    accuracy.add( ((float) correct / (k * 10)));
 
                 }
 
-                System.out.println(results);
+                for (int i = 0; i < results.size(); i++) {
+                    System.out.printf("Out of 1000 documents, %d were retrieved in the top %d documents\nAccuracy: %f\n\n%n", results.get(i), k_values[i], accuracy.get(i));
+
+                }
             }
         }
     }

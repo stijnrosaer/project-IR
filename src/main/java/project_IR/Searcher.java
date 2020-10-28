@@ -44,7 +44,7 @@ public class Searcher {
         ScoreDoc[] scoreDocs = docs.scoreDocs;
 
 
-        return new Pair<List<Pair<Document, Float>>, Long>(scoreDocs_to_docsList(scoreDocs, searcher), docs.totalHits.value);
+        return new Pair<>(scoreDocs_to_docsList(scoreDocs, searcher), docs.totalHits.value);
 //        return null;
 
     }
@@ -61,7 +61,7 @@ public class Searcher {
 
         for(ScoreDoc scDoc: scoreDocs){
 
-            documents.add(new Pair<Document, Float>(searcher.doc(scDoc.doc), scDoc.score));
+            documents.add(new Pair<>(searcher.doc(scDoc.doc), scDoc.score));
 
         }
         return documents;
