@@ -8,7 +8,11 @@ import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.javatuples.Pair;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +91,7 @@ public class Main {
                     }
                     // the field flag will state which field(s) to look the query for
                     // choice out of title, tags ,question, answers, all but title are standard
-                    else if (args[i].equals("--field") || args[i].equals("-f")){
+                    else if (args[i].equals("--field") || args[i].equals("-f")) {
                         List<String> fieldsList = new ArrayList<String>();
 
                         while (args.length > i + 1 && args[i + 1].charAt(0) != '-') {
@@ -105,8 +109,8 @@ public class Main {
                         k = Integer.parseInt(args[i + 1]);
 
                         i++;
-                    // the similarity flag asks what similarity to be used
-                    // needs to be the same as when indexed
+                        // the similarity flag asks what similarity to be used
+                        // needs to be the same as when indexed
                     } else if (args[i].equals("--similarity") || args[i].equals("-s")) {
                         switch (args[i + 1]) {
                             case "okapi":
@@ -149,6 +153,79 @@ public class Main {
                 }
 
 
+            }
+
+            if (args[0].equals("benchmark")) {
+                //standard values for when flags are not used
+                String[] fields = new String[]{"tags", "question", "answers"};
+
+                for (int i = 1; i < args.length; i++) {
+
+                    // argument parameter for query flag must be in between quotation marks if it's more than 1 word
+                    // the field flag will state which field(s) to look the query for
+                    // choice out of title, tags ,question, answers, all but title are standard
+                    // the amount flag tells how many documents will be returned
+                    if (args[i].equals("--similarity") || args[i].equals("-s")) {
+                        switch (args[i + 1]) {
+                            case "okapi":
+
+                                sim = new BM25Similarity();
+
+
+                                break;
+                            case "classic":
+
+                                sim = new ClassicSimilarity();
+                                break;
+
+                            case "boolean":
+
+                                sim = new BooleanSimilarity();
+                                break;
+                        }
+                        i++;
+
+
+                    } else {
+
+                        System.out.println("tag not recognized:  " + args[i]);
+                    }
+                }
+
+                Integer[] k_values = new Integer[]{10, 20, 25};
+
+                ArrayList<Integer> results = new ArrayList<Integer>();
+                for (Integer k : k_values) {
+                    int correct = 0;
+                    int count = 0;
+
+                    File fileNames = new File("titles_tmp.txt");    //creates a new file instance
+                    FileReader fr = new FileReader(fileNames, StandardCharsets.ISO_8859_1);   //reads the file
+                    BufferedReader br = new BufferedReader(fr);  //creates a buffering character input stream
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        try {
+//                            String title = new String(line.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.ISO_8859_1);
+                            List<Pair<Document, Float>> documents = Searcher.search(line, k, index_path, fields, sim);
+                            count += 1;
+
+                            for (Pair<Document, Float> doc : documents) {
+                                if (doc.getValue0().get("title").equals(line)) {
+                                    correct += 1;
+                                }
+                            }
+                        }
+                        catch (IllegalArgumentException I) {
+                            Integer ttt = 0;
+                        }
+
+                    }
+                    results.add(correct);
+                    results.add(count);
+
+                }
+
+                System.out.println(results);
             }
         }
     }
