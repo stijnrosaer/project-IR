@@ -19,6 +19,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.lucene.queryparser.flexible.standard.QueryParserUtil.escape;
+
 public class Searcher {
     /**
      *
@@ -27,24 +29,23 @@ public class Searcher {
      * @param index_directory the directory with the indexfiles
      * @return a list of pairs containing the top k  documents and their scores
      */
-    public static List<Pair<Document, Float>> search(String queryString, Integer k, Path index_directory, String[] fields, Similarity similarity) throws ParseException, IOException {
+    public static Pair<List<Pair<Document, Float>>, Long> search(String queryString, Integer k, Path index_directory, String[] fields, Similarity similarity) throws ParseException, IOException {
 
 //        Query query = new WildcardQuery(new Term("title", queryString));
         MultiFieldQueryParser parser = new MultiFieldQueryParser(fields , new StandardAnalyzer());
-        Query query = parser.parse(queryString);
+        Query query = parser.parse(escape(queryString));
 
         FSDirectory dir = FSDirectory.open(index_directory);
         IndexReader reader = DirectoryReader.open(dir);
         IndexSearcher searcher = new IndexSearcher(reader);
         searcher.setSimilarity(similarity);
 
-        ScoreDoc[] scoreDocs = searcher.search(query, k).scoreDocs;
+        TopDocs docs = searcher.search(query, k);
+        ScoreDoc[] scoreDocs = docs.scoreDocs;
 
 
-        List<Pair<Document, Float>> documents = scoreDocs_to_docsList(scoreDocs, searcher);
-
-        return documents;
-
+        return new Pair<List<Pair<Document, Float>>, Long>(scoreDocs_to_docsList(scoreDocs, searcher), docs.totalHits.value);
+//        return null;
 
     }
 

@@ -12,6 +12,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.ArrayList;
@@ -143,9 +145,9 @@ public class Main {
                     System.out.println("--query is not an optional argument");
                     return;
                 }
-                List<Pair<Document, Float>> documents = Searcher.search(querystring, k, index_path, fields, sim);
+                Pair<List<Pair<Document, Float>>, Long> documents = Searcher.search(querystring, k, index_path, fields, sim);
 
-                for (Pair<Document, Float> doc : documents) {
+                for (Pair<Document, Float> doc : documents.getValue0()) {
 
                     System.out.println("title: " + doc.getValue0().get("title") + "\nfile:" + doc.getValue0().get("id")
                             + "        score:" + doc.getValue1() + "\n");
@@ -200,16 +202,16 @@ public class Main {
                     int count = 0;
 
                     File fileNames = new File("titles_tmp.txt");    //creates a new file instance
-                    FileReader fr = new FileReader(fileNames, StandardCharsets.ISO_8859_1);   //reads the file
+                    FileReader fr = new FileReader(fileNames, StandardCharsets.UTF_8);   //reads the file
                     BufferedReader br = new BufferedReader(fr);  //creates a buffering character input stream
                     String line;
                     while ((line = br.readLine()) != null) {
                         try {
 //                            String title = new String(line.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.ISO_8859_1);
-                            List<Pair<Document, Float>> documents = Searcher.search(line, k, index_path, fields, sim);
+                            Pair<List<Pair<Document, Float>>, Long> documents = Searcher.search(line, k, index_path, fields, sim);
                             count += 1;
 
-                            for (Pair<Document, Float> doc : documents) {
+                            for (Pair<Document, Float> doc : documents.getValue0()) {
                                 if (doc.getValue0().get("title").equals(line)) {
                                     correct += 1;
                                 }
