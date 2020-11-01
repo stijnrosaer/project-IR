@@ -2,6 +2,11 @@ package project_IR;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.core.SimpleAnalyzer;
+import org.apache.lucene.analysis.core.StopAnalyzer;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.es.SpanishAnalyzer;
+import org.apache.lucene.analysis.nl.DutchAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.similarities.BM25Similarity;
@@ -77,14 +82,14 @@ public class Main {
 
 
                                 break;
-                            case "classic":
+                            case "simple":
 
-                                sim = new ClassicSimilarity();
+                                analyzer = new SimpleAnalyzer();
                                 break;
 
-                            case "boolean":
+                            case "english":
 
-                                sim = new BooleanSimilarity();
+                                analyzer = new EnglishAnalyzer();
                                 break;
                         }
                         i++;
@@ -158,7 +163,29 @@ public class Main {
                         i++;
 
 
-                    } else {
+                    } else if (args[i].equals("--analyzer") ) {
+                        switch (args[i + 1]) {
+                            case "standard":
+
+                                analyzer = new StandardAnalyzer();
+
+
+                                break;
+                            case "simple":
+
+                                analyzer = new SimpleAnalyzer();
+                                break;
+
+                            case "english":
+
+                                analyzer = new EnglishAnalyzer();
+                                break;
+                        }
+                        i++;
+
+                    }
+
+                    else {
 
                         System.out.println("tag not recognized:  " + args[i]);
                     }
@@ -169,7 +196,7 @@ public class Main {
                     System.out.println("--query is not an optional argument");
                     return;
                 }
-                Pair<List<Pair<Document, Float>>, Long> documents = Searcher.search(querystring, k, index_path, fields, sim);
+                Pair<List<Pair<Document, Float>>, Long> documents = Searcher.search(querystring, k, index_path, fields, sim, analyzer);
 
                 for (Pair<Document, Float> doc : documents.getValue0()) {
 
@@ -212,7 +239,29 @@ public class Main {
                         i++;
 
 
-                    } else if (args[i].equals("--field") || args[i].equals("-f")) {
+                    }
+                    else if (args[i].equals("--analyzer") ) {
+                        switch (args[i + 1]) {
+                            case "standard":
+
+                                analyzer = new StandardAnalyzer();
+
+
+                                break;
+                            case "simple":
+
+                                analyzer = new SimpleAnalyzer();
+                                break;
+
+                            case "english":
+
+                                analyzer = new EnglishAnalyzer();
+                                break;
+                        }
+                        i++;
+
+                    }
+                    else if (args[i].equals("--field") || args[i].equals("-f")) {
                         List<String> fieldsList = new ArrayList<String>();
 
                         while (args.length > i + 1 && args[i + 1].charAt(0) != '-') {
@@ -243,7 +292,7 @@ public class Main {
                     while ((line = br.readLine()) != null) {
                         try {
 //                            String title = new String(line.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.ISO_8859_1);
-                            Pair<List<Pair<Document, Float>>, Long> documents = Searcher.search(line, k, index_path, fields, sim);
+                            Pair<List<Pair<Document, Float>>, Long> documents = Searcher.search(line, k, index_path, fields, sim, analyzer);
 
                             for (Pair<Document, Float> doc : documents.getValue0()) {
                                 if (doc.getValue0().get("title").equals(line)) {

@@ -1,5 +1,6 @@
 package project_IR;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.es.SpanishAnalyzer;
@@ -32,10 +33,10 @@ public class Searcher {
      * @param index_directory the directory with the indexfiles
      * @return a list of pairs containing the top k  documents and their scores
      */
-    public static Pair<List<Pair<Document, Float>>, Long> search(String queryString, Integer k, Path index_directory, String[] fields, Similarity similarity) throws ParseException, IOException {
+    public static Pair<List<Pair<Document, Float>>, Long> search(String queryString, Integer k, Path index_directory, String[] fields, Similarity similarity, Analyzer analyzer) throws ParseException, IOException {
 
 //        Query query = new WildcardQuery(new Term("title", queryString));
-        MultiFieldQueryParser parser = new MultiFieldQueryParser(fields, new EnglishAnalyzer());
+        MultiFieldQueryParser parser = new MultiFieldQueryParser(fields, analyzer);
         Query query = parser.parse(escape(queryString));
 
         FSDirectory dir = FSDirectory.open(index_directory);
