@@ -188,6 +188,17 @@ public class Main {
                         i++;
 
 
+                    } else if (args[i].equals("--field") || args[i].equals("-f")) {
+                        List<String> fieldsList = new ArrayList<String>();
+
+                        while (args.length > i + 1 && args[i + 1].charAt(0) != '-') {
+                            fieldsList.add(args[i + 1]);
+                            i++;
+
+                        }
+                        fields = new String[fieldsList.size()];
+                        fields = fieldsList.toArray(fields);
+
                     } else {
 
                         System.out.println("tag not recognized:  " + args[i]);
@@ -215,14 +226,13 @@ public class Main {
                                     correct += 1;
                                 }
                             }
-                        }
-                        catch (IllegalArgumentException I) {
+                        } catch (IllegalArgumentException I) {
                             Integer ttt = 0;
                         }
 
                     }
                     results.add(correct);
-                    accuracy.add( ((float) correct / (k * 10)));
+                    accuracy.add(((float) correct / (k * 10)));
 
                 }
 

@@ -1,5 +1,9 @@
 package project_IR;
 
+import org.apache.lucene.analysis.core.SimpleAnalyzer;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.es.SpanishAnalyzer;
+import org.apache.lucene.analysis.nl.DutchAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -23,16 +27,15 @@ import static org.apache.lucene.queryparser.flexible.standard.QueryParserUtil.es
 
 public class Searcher {
     /**
-     *
-     * @param queryString the query in string form
-     * @param k the max amount that are allowed to be returned
+     * @param queryString     the query in string form
+     * @param k               the max amount that are allowed to be returned
      * @param index_directory the directory with the indexfiles
      * @return a list of pairs containing the top k  documents and their scores
      */
     public static Pair<List<Pair<Document, Float>>, Long> search(String queryString, Integer k, Path index_directory, String[] fields, Similarity similarity) throws ParseException, IOException {
 
 //        Query query = new WildcardQuery(new Term("title", queryString));
-        MultiFieldQueryParser parser = new MultiFieldQueryParser(fields , new StandardAnalyzer());
+        MultiFieldQueryParser parser = new MultiFieldQueryParser(fields, new EnglishAnalyzer());
         Query query = parser.parse(escape(queryString));
 
         FSDirectory dir = FSDirectory.open(index_directory);
@@ -50,23 +53,20 @@ public class Searcher {
     }
 
     /**
-     *
      * @param scoreDocs the list of scoredocs
-     * @param searcher the indexSearcher
-     * @return  a List of Pairs of Documents and teir score
+     * @param searcher  the indexSearcher
+     * @return a List of Pairs of Documents and teir score
      */
     private static List<Pair<Document, Float>> scoreDocs_to_docsList(ScoreDoc[] scoreDocs, IndexSearcher searcher) throws IOException {
 
         List<Pair<Document, Float>> documents = new ArrayList<Pair<Document, Float>>();
 
-        for(ScoreDoc scDoc: scoreDocs){
+        for (ScoreDoc scDoc : scoreDocs) {
 
             documents.add(new Pair<>(searcher.doc(scDoc.doc), scDoc.score));
 
         }
         return documents;
-
-
 
 
     }
