@@ -212,7 +212,7 @@ public class Main {
                 for (Integer k : k_values) {
                     int correct = 0;
 
-                    File fileNames = new File("titles_tmp.txt");    //creates a new file instance
+                    File fileNames = new File("titles.txt");    //creates a new file instance
                     FileReader fr = new FileReader(fileNames, StandardCharsets.UTF_8);   //reads the file
                     BufferedReader br = new BufferedReader(fr);  //creates a buffering character input stream
                     String line;
