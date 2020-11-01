@@ -1,6 +1,11 @@
 package project_IR;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.SimpleAnalyzer;
+import org.apache.lucene.analysis.core.StopAnalyzer;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.es.SpanishAnalyzer;
+import org.apache.lucene.analysis.nl.DutchAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -33,12 +38,13 @@ import static org.apache.lucene.index.IndexWriterConfig.OpenMode.CREATE;
 
 public class Indexer {
 
-     // Basic analyzer needed for the indexWriter
+
 
     /**
      * the public function that will initialize the indexWriter and index every file that will be called from the outside
+     *
      * @param source_path path where source documents are located
-     * @param index_path path where the index files should be written to
+     * @param index_path  path where the index files should be written to
      */
     public static void index(Path source_path, Path index_path, Similarity similarity, Analyzer analyzer) throws IOException {
         IndexWriterConfig config = new IndexWriterConfig(analyzer); // Basic Configuration for the indexWriter
@@ -66,14 +72,15 @@ public class Indexer {
         writer.commit();
         writer.close();
 
-        System.out.println("Finished indexing "+ index[0].toString() +" files");
+        System.out.println("Finished indexing " + index[0].toString() + " files");
 
     }
 
     /**
      * use the indexWriter to index the given file
+     *
      * @param file_path the path to the file to be indexed
-     * @param writer the indexWriter
+     * @param writer    the indexWriter
      */
     static void indexFile(Path file_path, IndexWriter writer) throws IOException, ParserConfigurationException, SAXException {
 
@@ -88,7 +95,7 @@ public class Indexer {
         String tags = file_doc.getElementsByTagName("Tags").item(0).getTextContent(); // get the tags of the question
 
         NodeList nodeList = file_doc.getDocumentElement().getChildNodes();
-        List<String > answers = new ArrayList<>(); // run over all answers to the question and make them a list
+        List<String> answers = new ArrayList<>(); // run over all answers to the question and make them a list
         for (int i = 3; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);// get an answer
             if (node.getNodeType() == Node.ELEMENT_NODE) {
