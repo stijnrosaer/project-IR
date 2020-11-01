@@ -1,5 +1,7 @@
 package project_IR;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.similarities.BM25Similarity;
@@ -24,6 +26,7 @@ public class Main {
     public static Path index_path = Path.of("./index"); // Destination of indexed files
     public static Path source_path = Path.of("../documents2"); // Source files
     public static Similarity sim = new ClassicSimilarity();
+    public static Analyzer analyzer = new StandardAnalyzer();
 
 
     /**
@@ -66,13 +69,34 @@ public class Main {
                         i++;
 
 
-                    } else {
+                    } else if (args[i].equals("--analyzer") ) {
+                        switch (args[i + 1]) {
+                            case "standard":
+
+                                analyzer = new StandardAnalyzer();
+
+
+                                break;
+                            case "classic":
+
+                                sim = new ClassicSimilarity();
+                                break;
+
+                            case "boolean":
+
+                                sim = new BooleanSimilarity();
+                                break;
+                        }
+                        i++;
+
+                    }
+                    else {
 
                         System.out.println("tag not recognized:  " + args[i]);
                     }
                 }
 
-                Indexer.index(source_path, index_path, sim);
+                Indexer.index(source_path, index_path, sim, analyzer);
             }
             // the search command
             if (args[0].equals("search")) {

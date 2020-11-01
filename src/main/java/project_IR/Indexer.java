@@ -33,14 +33,14 @@ import static org.apache.lucene.index.IndexWriterConfig.OpenMode.CREATE;
 
 public class Indexer {
 
-    public static Analyzer analyzer = new StandardAnalyzer(); // Basic analyzer needed for the indexWriter
+     // Basic analyzer needed for the indexWriter
 
     /**
      * the public function that will initialize the indexWriter and index every file that will be called from the outside
      * @param source_path path where source documents are located
      * @param index_path path where the index files should be written to
      */
-    public static void index(Path source_path, Path index_path, Similarity similarity) throws IOException {
+    public static void index(Path source_path, Path index_path, Similarity similarity, Analyzer analyzer) throws IOException {
         IndexWriterConfig config = new IndexWriterConfig(analyzer); // Basic Configuration for the indexWriter
         config.setOpenMode(CREATE); //overwrite the index if already exists
         config.setSimilarity(similarity);
