@@ -31,7 +31,7 @@ public class Main {
     public static Path index_path = Path.of("./index"); // Destination of indexed files
     public static Path source_path = Path.of("../documents2"); // Source files
     public static Similarity sim = new ClassicSimilarity();
-    public static Analyzer analyzer = new StandardAnalyzer();
+    public static Analyzer analyzer = new EnglishAnalyzer();
 
 
     /**
@@ -162,7 +162,7 @@ public class Main {
                         }
                         i++;
 
-
+                    // flag to decide the analyzer
                     } else if (args[i].equals("--analyzer") ) {
                         switch (args[i + 1]) {
                             case "standard":
