@@ -46,6 +46,8 @@ public class Searcher {
         TopDocs docs = searcher.search(query, k);
         ScoreDoc[] scoreDocs = docs.scoreDocs;
 
+//        Explanation ex = searcher.explain(query, 1);
+//        System.out.println(ex);
 
         return new Pair<>(scoreDocs_to_docsList(scoreDocs, searcher), docs.totalHits.value);
 //        return null;
